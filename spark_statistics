@@ -1,0 +1,19 @@
+"""
+Gather statistics on the Big Data using Spark
+"""
+
+# Get data
+val data1 = spark.read.options(Map("inferSchema"->"true","delimiter"->",","header"->"true")).csv("hdfs://cluster-9eee-m/user/sourav/Crimes.csv")
+data1.printSchema()
+
+# Select columns of interest
+val df = data1.toDF("Case Number","Date","Block","Primary Type","Description","Location Description","Arrest","Domestic","Beat","Ward","Year","Updated On","Latitude","Longitude")
+
+# Group by primary type; show top 10 by count
+df.groupBy("Primary Type").count().show(5)
+# Group by primary type, description, arrest; show top 10 by count
+df.groupBy("Primary Type","Description","Arrest").count().show(10)
+# Group by primary type, location; show top 5 by count
+df.groupBy("Primary Type","Location Description").count().show(5)
+# Group by description, arrest; show top 5 by count
+df.groupBy("Description","Arrest").count().show(5)
